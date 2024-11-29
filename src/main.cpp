@@ -4,11 +4,11 @@
 #include "window.cpp"
 #include "fe-kernel.h"
 
-int main()
+/*int main()
 {
     run();
     return loop();
-}
+}*/
 
 
 void run()
