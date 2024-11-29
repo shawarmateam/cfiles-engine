@@ -2,8 +2,21 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "window.cpp"
+#include "fe-kernel.h"
 
 int main()
+{
+    run();
+    return loop();
+}
+
+
+void run()
+{
+    std::cout << "Starting files engine..." << std::endl;
+}
+
+int loop()
 {
     Window window_main;
     window_main.init();
@@ -22,4 +35,3 @@ int main()
     glfwTerminate();
     return 0;
 }
-
