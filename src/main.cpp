@@ -83,14 +83,16 @@ int loop()
     glBindVertexArray(0);
 
     while (!glfwWindowShouldClose(window_main.getWindow())) {
+        glfwPollEvents();
+
+        glfwSwapBuffers(window_main.getWindow());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glfwSwapBuffers(window_main.getWindow());
-        glfwPollEvents();
     }
 
     glDeleteVertexArrays(1, &VAO);
