@@ -1,12 +1,13 @@
-// TODO: include libs
+#include <GL/gl.h>
 #include <iostream>
+#include <fstream>
 
 class RenderTexture
 {
-    private:
+    public:
         int w,h;
         GLuint id;
-    public:
+
         std::string texture_path;
 
         unsigned char* loadImage(const std::string& filename, size_t& outSize) {
@@ -67,4 +68,8 @@ class RenderTexture
                 glBindTexture(GL_TEXTURE_2D, id);
             }
         }
-}
+
+        int getW()  { return w; }
+        int getH()  { return h; }
+        int getId() { return id; }
+};
