@@ -6,12 +6,15 @@
 #define RESET "\033[0m"
 #define logftl(msg) std::cerr << RED "FE_FATAL: " msg RESET << std::endl
 #define logerr(msg) std::cerr << RED "FE_ERROR: " RESET msg << std::endl
+#define VERTEX_MARKER "// vertex shader"
+#define FRAGMENT_MARKER "// fragment shader"
+#define VERTEX_MARKER_LEN 16
+#define FRAGMENT_MARKER_LEN 18
 
 class Shader
 {
     private:
         GLuint program,vs,fs;
-        bool startReadFragment;
 
     public:
         char* readFile(const char* filename) {
@@ -37,9 +40,35 @@ class Shader
             return buffer;
         }
 
+        void splitShader(const char* shaderSource, char** vertexShader, char** fragmentShader)
+        {
+            const char* vertexPos = strstr(shaderSource, VERTEX_MARKER);
+            const char* fragmentPos = strstr(shaderSource, FRAGMENT_MARKER);
+
+            if (vertexPos == nullptr || fragmentPos == nullptr) {
+                logerr("Unable to find marker(s)");
+                exit(1);
+            }
+
+            size_t vertexLength = fragmentPos - vertexPos - VERTEX_MARKER_LEN;
+            *vertexShader = new char[vertexLength + 1];
+            strncpy(*vertexShader, vertexPos + VERTEX_MARKER_LEN, vertexLength);
+            (*vertexShader)[vertexLength] = 0;
+
+            size_t fragmentLength = strlen(fragmentPos + FRAGMENT_MARKER_LEN);
+            *fragmentShader = new char[fragmentLength + 1];
+            strncpy(*fragmentShader, fragmentPos + FRAGMENT_MARKER_LEN, fragmentLength);
+            (*fragmentShader)[fragmentLength] = 0;
+        }
+
         void init(const char *filename)
         {
             const char *shader_str = readfile(filename);
+            const char *vertexCode = nullptr;
+            const char *fragmentCode = nullptr;
+
+            splitShader(shader_str, &vertexCode, &fragmentCode);
+
             program = glCreateProgram();
 
             vs = glCreateShader(GL_VERTEX_SHADER);
@@ -102,5 +131,10 @@ class Shader
             FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
             val.get(buffer);
             if (location != -1) glUniformMatrix4fv(location, false, buffer);
+        }
+
+        void killShader()
+        {
+            glDeleteProgram(shaderProgram);
         }
 };

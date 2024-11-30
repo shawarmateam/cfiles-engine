@@ -4,6 +4,7 @@
 #include <cmath>
 #include "window.cpp"
 #include "fe-kernel.h"
+#include "shader.cpp"
 //#include "render-texture.cpp"
 
 const char *vertexShaderCode =
@@ -49,7 +50,7 @@ int loop()
 
     glViewport(0,0,600,600);
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    /*GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderCode, 0);
     glCompileShader(vertexShader);
 
@@ -64,8 +65,9 @@ int loop()
     glLinkProgram(shaderProgram);
 
     glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
+    glDeleteShader(fragmentShader);*/
+    Shader shader;
+    shader.init();
 
     GLuint VAO, VBO;
 
@@ -97,7 +99,6 @@ int loop()
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
 
     window_main.kill();
 
