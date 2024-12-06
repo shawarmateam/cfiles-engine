@@ -92,6 +92,7 @@ int loop()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         //glUseProgram(shaderProgram);
+        shader.bind();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
