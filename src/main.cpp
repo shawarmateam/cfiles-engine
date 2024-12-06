@@ -67,7 +67,7 @@ int loop()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);*/
     Shader shader;
-    shader.init();
+    shader.init("shaders/shader_def.glsl");
 
     GLuint VAO, VBO;
 
@@ -91,7 +91,7 @@ int loop()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        glUseProgram(shaderProgram);
+        //glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 

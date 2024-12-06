@@ -1,6 +1,11 @@
 // TODO: include libs
 #include <iostream>
-
+#include <vector>
+#include <GL/gl.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <fstream>
 
 #define RED "\033[31m"
 #define RESET "\033[0m"
@@ -63,31 +68,50 @@ class Shader
 
         void init(const char *filename)
         {
-            const char *shader_str = readfile(filename);
-            const char *vertexCode = nullptr;
-            const char *fragmentCode = nullptr;
+            const char *shader_str = readFile(filename);
+            char *vertexCode = nullptr;
+            char *fragmentCode = nullptr;
 
             splitShader(shader_str, &vertexCode, &fragmentCode);
 
             program = glCreateProgram();
 
             vs = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vs, shader_str);
+
+            //          shader, str_num (if [], otherwise 1 (if char*)), idk
+            glShaderSource(vs, 1, &shader_str, 0);
             glCompileShader(vs);
-            if (glGetShaderi(vs, GL_COMPILE_STATUS) != 1)
+            GLint status;
+
+            glGetShaderiv(vs, GL_COMPILE_STATUS, &status);
+
+            if (status != GL_TRUE)
             {
-                logftl("UNABLE TO COMPILE SHADER");
-                std::cout << glGetShaderInfoLog(vs) << std::endl;
+                logftl("UNABLE TO COMPILE SHADER (vs)");
+                GLint logSize;
+                glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
+                std::vector<GLchar> infolog(logSize);
+
+                glGetShaderInfoLog(vs, logSize, 0, infolog.data());
+                std::cout << infolog.data() << std::endl;
                 exit(1);
             }
 
             fs = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fs, shader_str);
+            glShaderSource(fs, 1, &shader_str, 0);
             glCompileShader(fs);
-            if (glGetShaderi(fs, GL_COMPILE_STATUS) != 1)
+
+            glGetShaderiv(fs, GL_COMPILE_STATUS, &status);
+
+            if (status != GL_TRUE)
             {
-                logftl("UNABLE TO COMPILE SHADER");
-                std::cout << glGetShaderInfoLog(fs) << std::endl;
+                logftl("UNABLE TO COMPILE SHADER (fs)");
+                GLint logSize;
+                glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
+                std::vector<GLchar> infolog(logSize);
+
+                glGetShaderInfoLog(vs, logSize, 0, infolog.data());
+                std::cout << infolog.data() << std::endl;
                 exit(1);
             }
 
@@ -98,18 +122,32 @@ class Shader
             glBindAttribLocation(program, 1, "textures");
 
             glLinkProgram(program);
-            if (glGetProgrami(program, GL_LINK_STATUS) != 1)
+
+            glGetProgramiv(program, GL_LINK_STATUS, &status);
+            if (status != GL_TRUE)
             {
                 logftl("UNABLE TO LINK SHADER PROGRAM");
-                std::cout << glGetProgramInfoLog(program) << std::endl;
+                GLint logSize;
+                glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
+                std::vector<GLchar> infolog(logSize);
+
+                glGetProgramInfoLog(program, logSize, 0, infolog.data());
+                std::cout << infolog.data() << std::endl;
                 exit(1);
             }
 
             glValidateProgram(program);
-            if (glGetProgrami(program, GL_VALIDATE_STATUS) != 1)
+            glGetProgramiv(program, GL_VALIDATE_STATUS, &status);
+
+            if (status != GL_TRUE)
             {
                 logftl("UNABLE TO VALIDATE SHADER PROGRAM");
-                std::cout << glGetProgramInfoLog(program) << std::endl;
+                GLint logSize;
+                glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
+                std::vector<GLchar> infolog(logSize);
+
+                glGetProgramInfoLog(program, logSize, 0, infolog.data());
+                std::cout << infolog.data() << std::endl;
                 exit(1);
             }
         }
@@ -125,16 +163,14 @@ class Shader
             if (location != -1) glUniform1i(location, val);
         }
 
-        void setUniform4f(char *name, Matrix4f val)
+        void setUniform4f(char *name, glm::mat4 val)
         {
             int location = glGetUniformLocation(program, name);
-            FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-            val.get(buffer);
-            if (location != -1) glUniformMatrix4fv(location, false, buffer);
+            if (location != -1) glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val));
         }
 
         void killShader()
         {
-            glDeleteProgram(shaderProgram);
+            glDeleteProgram(program);
         }
 };
