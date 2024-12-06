@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <fstream>
+#include <cstring>
 
 #define RED "\033[31m"
 #define RESET "\033[0m"
@@ -64,6 +65,12 @@ class Shader
             *fragmentShader = new char[fragmentLength + 1];
             strncpy(*fragmentShader, fragmentPos + FRAGMENT_MARKER_LEN, fragmentLength);
             (*fragmentShader)[fragmentLength] = 0;
+
+            // deleting space after marker comment
+            std::string vertexNew(*vertexShader);
+            vertexNew.erase(0,1);
+            delete[] *vertexShader;
+            *vertexShader = strdup(vertexNew.c_str());
         }
 
         void init(const char *filename)
@@ -79,7 +86,7 @@ class Shader
             vs = glCreateShader(GL_VERTEX_SHADER);
 
             //          shader, str_num (if [], otherwise 1 (if char*)), idk
-            glShaderSource(vs, 1, &shader_str, 0);
+            glShaderSource(vs, 1, &vertexCode, 0);
             glCompileShader(vs);
             GLint status;
 
@@ -94,11 +101,13 @@ class Shader
 
                 glGetShaderInfoLog(vs, logSize, 0, infolog.data());
                 std::cout << infolog.data() << std::endl;
+                logftl("VERTEX CODE:");
+                std::cout << '{' << vertexCode << '}' << std::endl;
                 exit(1);
             }
 
             fs = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fs, 1, &shader_str, 0);
+            glShaderSource(fs, 1, &fragmentCode, 0);
             glCompileShader(fs);
 
             glGetShaderiv(fs, GL_COMPILE_STATUS, &status);
@@ -112,6 +121,8 @@ class Shader
 
                 glGetShaderInfoLog(vs, logSize, 0, infolog.data());
                 std::cout << infolog.data() << std::endl;
+                logftl("FRAGMENT CODE:");
+                std::cout << fragmentCode << std::endl;
                 exit(1);
             }
 
