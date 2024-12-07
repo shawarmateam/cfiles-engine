@@ -6,22 +6,22 @@
 class Model
 {
     private:
-        GLint draw_count,v_id,t_id,i_id;
+        GLuint draw_count,v_id,t_id,i_id;
 
     public:
         void init(GLfloat[] vertices, GLfloat[] tex_coords, GLint[] indices)
         {
             draw_count = sizeof(indices) / sizeof(indices[0]);
 
-            v_id = glGenBuffers();
+            glGenBuffers(1, &v_id);
             glBindBuffer(GL_ARRAY_BUFFER, v_id);
             glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
-            t_id = glGenBuffers();
+            glGenBuffers(1, &t_id);
             glBindBuffer(GL_ARRAY_BUFFER, t_id);
             glBufferData(GL_ARRAY_BUFFER, tex_coords, GL_STATIC_DRAW);
 
-            i_id = glGenBuffers();
+            glGenBuffers(1, &i_id);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_id);
 
             std::vector<GLint> buffer;

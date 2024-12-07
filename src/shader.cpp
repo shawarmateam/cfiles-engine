@@ -168,13 +168,13 @@ class Shader
             glUseProgram(program);
         }
 
-        void setUniformInt(char *name, int val)
+        void setUniform(char *name, int val)
         {
             int location = glGetUniformLocation(program, name);
             if (location != -1) glUniform1i(location, val);
         }
 
-        void setUniform4f(char *name, glm::mat4 val)
+        void setUniform(char *name, glm::mat4 val)
         {
             int location = glGetUniformLocation(program, name);
             if (location != -1) glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val));

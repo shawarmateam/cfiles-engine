@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "model.cpp"
 
 class PosTexture
 {
@@ -51,10 +52,10 @@ class PosTexture
             glm::mat4 tex_pos = glm::mat4().translate(glm::vec3(x, y-(y*(-70)/100), 0));
             glm::mat4 target = glm::mat4();
 
-            cam.getProjection().mul(world, target);
-            target.mul(tex_pos);
+            target = cam.getProjection() * world;
+            target *= tex_pos;
             shader.setUniform("sampler", 0);
-            shader.setUniform("projection", 0);
+            shader.setUniform("projection", target);
             model.render();
 
             glDisable(GL_BLEND);
