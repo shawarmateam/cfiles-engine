@@ -1,5 +1,5 @@
 
-FLAGS = -lGL -lGLEW -lglfw
+FLAGS = -lGL -lGLEW -lglfw -I/usr/include/glm -fmodules-ts
 
 
 all: build run
