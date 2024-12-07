@@ -10,7 +10,7 @@ class RenderTexture
 
         std::string texture_path;
 
-        unsigned char* loadImage(const std::string& filename, size_t& outSize) {
+        unsigned char* setImg(const std::string& filename, size_t& outSize) {
             std::ifstream file(filename, std::ios::binary);
             if (!file) {
                 std::cerr << "Unable to open file: " << filename << std::endl;
@@ -49,7 +49,7 @@ class RenderTexture
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_buff);
         }
 
-        void setSize(int new_w, int new_h)
+        void setImg(int new_w, int new_h)
         {
             glGenTextures(1, &id);
             glBindTexture(GL_TEXTURE_2D, id);

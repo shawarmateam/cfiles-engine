@@ -5,7 +5,7 @@
 #include "window.cpp"
 #include "fe-kernel.h"
 #include "shader.cpp"
-//#include "render-texture.cpp"
+#include "render-texture.cpp"
 
 const char *vertexShaderCode =
 "#version 330 core\n"
@@ -40,32 +40,8 @@ int loop()
     Window window_main;
     window_main.init();
 
-    /*RenderTexture test;
-    test.w = 100;
-    test.h = 100;
-    size_t img_size=0;
-    unsigned char *img_test = test.loadImage("/home/adisteyf/2024-11-10_11-16.png", img_size);
-    test.setImg(img_test);
-    test.bind(0);*/
-
     glViewport(0,0,600,600);
 
-    /*GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderCode, 0);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderCode, 0);
-    glCompileShader(fragmentShader);
-
-    GLuint shaderProgram = glCreateProgram();
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);*/
     Shader shader;
     shader.init("shaders/shader_def.glsl");
 
@@ -84,6 +60,10 @@ int loop()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    RenderTexture test;
+    size_t size_test=0;
+    test.setImg("/home/adisteyf/2024-11-14_11-57.png", size_test);
+
     while (!glfwWindowShouldClose(window_main.getWindow())) {
         glfwPollEvents();
 
@@ -91,8 +71,8 @@ int loop()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        //glUseProgram(shaderProgram);
         shader.bind();
+        test.bind(0);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
