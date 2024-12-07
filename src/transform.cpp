@@ -1,5 +1,5 @@
 // TODO: add includes
-
+/*
 class Transform
 {
     private:
@@ -24,4 +24,13 @@ class Transform
                 }
             }
         }
+};*/
+
+#ifndef TRANSFORM_FE
+#define TRANSFORM_FE
+
+struct Transform
+{
+    float x,y,w,h,x_limit,y_limit;
 };
+#endif // TRANSFORM_FE

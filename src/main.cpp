@@ -7,6 +7,7 @@
 #include "shader.cpp"
 #include "render-texture.cpp"
 #include "camera.cpp"
+#include "transform.cpp"
 
 Camera cam;
 Window window_main;
@@ -15,7 +16,16 @@ void run()
 {
     std::cout << "Starting files engine..." << std::endl;
     window_main.init();
-    cam.init(); // TODO: add transform
+    
+    Transform cam_pos;
+    cam_pos.x = 0;
+    cam_pos.y = 0;
+    cam_pos.w = 600;
+    cam_pos.h = 600;
+    cam_pos.x_limit = 1000;
+    cam_pos.y_limit = 1000;
+    
+    cam.init(cam_pos); // TODO: add transform
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -25,8 +35,7 @@ int loop()
 
     Shader shader;
     shader.init("shaders/shader_def.glsl");
-    glm::mat4 projection = glm::mat4()
-        .ortho2D(cam.transform.sizeX/2, -cam.transform.sizeX/2, cam.transform.sizeY/2, -cam.transform.sizeY/2);
+    glm::mat4 projection = glm::ortho(cam.transform.w/2, -cam.transform.w/2, cam.transform.h/2, -cam.transform.h/2);
 
     RenderTexture test;
     size_t size_test=0;
