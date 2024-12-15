@@ -1,86 +1,103 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <cmath>
-#include "window.cpp"
-#include "fe-kernel.h"
-#include "shader.cpp"
-#include "camera.cpp"
-#include "render-texture.cpp"
-#include "pos-texture.cpp"
-#include "transform.cpp"
+#include <vector>
+#include <GL/gl.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <fstream>
+#include <cstring>
+#include "shader.h"
+#include "buffers.h"
 
-Camera cam;
-Window window_main;
-
-void run()
+int main()
 {
-    std::cout << "Starting files engine..." << std::endl;
-    window_main.init();
-    
-    Transform cam_pos;
-    cam_pos.x = 0;
-    cam_pos.y = 0;
-    cam_pos.w = 600;
-    cam_pos.h = 600;
-    cam_pos.x_limit = 1000;
-    cam_pos.y_limit = 1000;
-    
-    cam.init(cam_pos); // TODO: add transform
-    glEnable(GL_TEXTURE_2D);
-}
+    // Initialize GLFW
+    if (!glfwInit())
+    {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        return -1;
+    }
 
-int loop()
-{
-    glViewport(0,0,600,600);
+    // Set GLFW window hints
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    Shader shader;
-    shader.init("shaders/shader_def.glsl");
-    glm::mat4 projection = glm::ortho(cam.transform.w/2, -cam.transform.w/2, cam.transform.h/2, -cam.transform.h/2);
-    glm::mat4 scale = glm::mat4(1.0f);
-    scale = glm::translate(scale, glm::vec3(.0f, .0f, .0f));
-    scale = glm::scale(scale, glm::vec3(80.f, 80.f, 80.f));
+    // Create a windowed mode window and its OpenGL context
+    GLFWwindow* window = glfwCreateWindow(600, 600, "OpenGL Triangle", nullptr, nullptr);
+    if (!window)
+    {
+        std::cerr << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
 
-    RenderTexture test;
-    size_t size_test=0;
-    unsigned char *img = test.loadImg("/home/adisteyf/2024-11-10_11-20.png", size_test);
-    test.setImg(img);
+    glfwMakeContextCurrent(window);
+    gladLoadGL();
 
-    PosTexture pos_test;
-    pos_test.init(1365, 485);
+    // Set the viewport
+    glViewport(0, 0, 600, 600);
 
-    #ifdef CLEAR_NON_LOOP_FE
-        glfwSwapBuffers(window_main.getWindow());
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    #endif
+    // Define the vertices for a triangle
+    GLfloat vertices[] = 
+    {
+        -0.5f, -0.5f * sqrt(3) / 3, 0.0f,
+         0.5f, -0.5f * sqrt(3) / 3, 0.0f,
+         0.0f,  0.5f * sqrt(3)*2 / 3, 0.0f,
+        
+        -0.5f/2, 0.5f * sqrt(3) / 6, 0.0f,
+         0.5f/2, 0.5f * sqrt(3) / 6, 0.0f,
+         0.0f,  -0.5f * sqrt(3) / 3, 0.0f
+    };
 
-    #ifndef NO_LOOP_FE
-    while (!glfwWindowShouldClose(window_main.getWindow())) {
-    #endif
+    GLuint indices[] =
+    {
+        0, 3, 5,
+        3, 2, 4,
+        5, 4, 1
+    };
+
+    Buffers buffs;
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffs.EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Specify the layout of the vertex data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    // Load and compile shaders
+    Shader shader("shaders/shader_def.glsl");
+
+    // Main loop
+    while (!glfwWindowShouldClose(window))
+    {
+        // Poll for and process events
         glfwPollEvents();
 
-        #ifndef CLEAR_NON_LOOP_FE
-        glfwSwapBuffers(window_main.getWindow());
+        // Clear the color buffer
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        #endif
 
-        pos_test.renderTexture(test, 0, 0, shader, scale, cam);
-
+        // Use the shader program
         shader.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-    #ifndef NO_LOOP_FE
+
+        // Draw the triangle
+        buffs.bind();
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+
+        // Swap front and back buffers
+        glfwSwapBuffers(window);
     }
-    #endif
 
-    /*glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    */
-
-    window_main.kill();
-
-    glfwDestroyWindow(window_main.getWindow());
+    // Clean up
+    buffs.free();
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
+

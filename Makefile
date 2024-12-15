@@ -1,14 +1,22 @@
 
-FLAGS = -lGL -lGLEW -lglfw -I/usr/include/glm -fmodules-ts
+#FLAGS = -lGL -lGLEW -lglfw -I/usr/include/glm -fmodules-ts -I/usr/include/
 
+CXX = g++
+CXXFLAGS = -I/usr/include -lGL -lglfw -I/usr/include/glm -I./include
+SOURCES = src/main.cpp src/glad.c src/buffers.cpp src/shader.cpp
+#SOURCES = src/*
+#src/shader.cpp
 
-all: build run
+TARGET_DIR = bin
+TARGET = $(TARGET_DIR)/main
 
-build:
-	mkdir -p ./bin
-	g++ -c ./src/main.cpp -o ./bin/main.o
-	gcc -c ./src/boot.c -o ./bin/boot.o
-	g++ ./bin/boot.o ./bin/main.o -o ./bin/main ${FLAGS}
+all: $(TARGET_DIR) $(TARGET)
 
-run: build
-	./bin/main
+$(TARGET_DIR):
+	mkdir -p $(TARGET_DIR)
+
+$(TARGET): $(SOURCES)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+clean:
+	rm -rf $(TARGET_DIR)

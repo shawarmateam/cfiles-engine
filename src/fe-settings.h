@@ -1,5 +1,0 @@
-#define LOGGING_FE
-//#define NO_LOOP_FE
-#define CLEAR_NON_LOOP_FE
-#define DISABLE_MODEL_LOGS_FE
-
