@@ -1,6 +1,7 @@
 #include "window.h"
 #include "shader.h"
 #include "buffers.h"
+#include "texture.h"
 #include <cmath>
 #include <vector>
 #include "stb/stb_image.h"
@@ -35,30 +36,10 @@ int fe_main() {
     Shader shader("shaders/shader_def.glsl");
     const GLuint uniID = glGetUniformLocation(shader.getProgram(), "scale");
 
-    int wImg, hImg, nImg;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char *bytes = stbi_load("assets/textures/logo.png", &wImg, &hImg, &nImg, 0);
 
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    Texture texture("assets/textures/logo.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, wImg, hImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-    stbi_image_free(bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    GLuint tex0 = glGetUniformLocation(shader.getProgram(), "tex0");
-    shader.bind();
-    glUniform1i(tex0, 0);
+    texture.texUnit(shader, "tex0", 0);
 
     while (!window.shouldClose() && !fe_status) {
         window.pollEvents();
@@ -66,7 +47,7 @@ int fe_main() {
 
         shader.bind();
         glUniform1f(uniID, 0.5f);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        texture.bind();
         buffs.bind();
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
 
@@ -75,7 +56,6 @@ int fe_main() {
 
     buffs.free();
     Window::terminateGLFW();
-    glDeleteTextures(1, &texture);
 
     return 0;
 }
