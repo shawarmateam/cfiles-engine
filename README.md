@@ -1,6 +1,8 @@
 # Files Engine in C/C++
 
+
 <p align="center">
+    <img src="https://github.com/shawarmateam/cfiles-engine/blob/main/assets/textures/logo.png" alt="logo" width="200">
     <a href="https://github.com/shawarmateam/cfiles-engine/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/shawarmateam/cfiles-engine?style=for-the-badge">
     </a>
