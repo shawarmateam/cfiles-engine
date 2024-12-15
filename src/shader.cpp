@@ -12,7 +12,7 @@ char* Shader::readFile(const char* filename) {
     
     file.seekg(0);
     file.read(buffer.data(), size);
-    buffer[size] = '\0';
+    buffer[size] = 0;
     
     return strdup(buffer.data());
 }
