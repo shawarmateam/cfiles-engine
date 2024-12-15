@@ -167,3 +167,8 @@ void Shader::freeShader()
     glDeleteShader(vs);
     glDeleteShader(fs);
 }
+
+GLuint Shader::getProgram()
+{
+    return program;
+}

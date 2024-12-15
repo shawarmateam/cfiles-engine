@@ -32,6 +32,7 @@ class Shader
         void setUniform(const char *name, glm::mat4 val);
         void killShader();
         void freeShader();
+        GLuint getProgram();
 };
 
 #endif // SHADER_CLASS_FE
