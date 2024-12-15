@@ -1,7 +1,7 @@
 #include "fe-kernel.h"
 #include <signal.h>
 #include <stdio.h>
-#include <cstdlib>
+#include <stdlib.h>
 
 volatile int fe_status = 0;
 
@@ -22,6 +22,6 @@ int main()
 {
     signal(SIGINT, fe_signal_handler);
     int status = fe_main();
-
+    
     return status;
 }
