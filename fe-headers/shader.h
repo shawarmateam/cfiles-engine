@@ -29,6 +29,7 @@ class Shader
         char* readFile(const char* filename);
         void compileShader(GLuint shader, const char* code, const char* shaderType);
         Shader(const char* filename);
+        ~Shader();
         void bind();
         void setUniform(const char *name, int val);
         void setUniform(const char *name, glm::mat4 val);

@@ -49,10 +49,8 @@ int fe_main() {
     }
 
     buffs.free();
-    shader.killShader();
-    shader.freeShader();
     Window::terminateGLFW();
-    
+
     return 0;
 }
 

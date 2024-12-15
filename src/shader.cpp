@@ -95,6 +95,11 @@ Shader::Shader(const char *filename) {
     delete[] shader_str;
 }
 
+Shader::~Shader() {
+    killShader();
+    freeShader();
+}
+
 void Shader::bind()
 {
     glUseProgram(program);
@@ -127,3 +132,4 @@ GLuint Shader::getProgram()
 {
     return program;
 }
+
