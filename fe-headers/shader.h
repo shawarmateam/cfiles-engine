@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include "fe-kernel.h"
 
 #define RED "\033[31m"
 #define RESET "\033[0m"

@@ -2,7 +2,7 @@ CXX = g++
 INCLUDES = /usr/include /usr/include/glm ./include ./fe-headers
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
 CXXFLAGS = $(INCLUDES_FLAGS) -lGL -lglfw
-SOURCES = src/main.cpp src/glad.c src/buffers.cpp src/shader.cpp
+SOURCES = src/main.cpp src/glad.c src/buffers.cpp src/shader.cpp src/boot.c
 TARGET_DIR = bin
 TARGET = $(TARGET_DIR)/main
 

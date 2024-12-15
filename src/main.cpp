@@ -12,7 +12,7 @@
 #include "shader.h"
 #include "buffers.h"
 
-int main()
+int fe_main()
 {
     if (!glfwInit())
     {

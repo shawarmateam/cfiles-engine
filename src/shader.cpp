@@ -80,7 +80,7 @@ Shader::Shader(const char *filename)
         std::cout << infolog.data() << std::endl;
         logftl("VERTEX CODE:");
         std::cout << '{' << vertexCode << '}' << std::endl;
-        exit(1);
+        fe_panic();
     }
 
     fs = glCreateShader(GL_FRAGMENT_SHADER);
@@ -100,7 +100,7 @@ Shader::Shader(const char *filename)
         std::cout << infolog.data() << std::endl;
         logftl("FRAGMENT CODE:");
         std::cout << fragmentCode << std::endl;
-        exit(1);
+        fe_panic();
     }
 
     glAttachShader(program, vs);
@@ -121,7 +121,7 @@ Shader::Shader(const char *filename)
 
         glGetProgramInfoLog(program, logSize, 0, infolog.data());
         std::cout << infolog.data() << std::endl;
-        exit(1);
+        fe_panic();
     }
 
     glValidateProgram(program);
@@ -136,7 +136,7 @@ Shader::Shader(const char *filename)
 
         glGetProgramInfoLog(program, logSize, 0, infolog.data());
         std::cout << infolog.data() << std::endl;
-        exit(1);
+        fe_panic();
     }
 }
 
