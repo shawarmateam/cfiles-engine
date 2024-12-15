@@ -2,9 +2,13 @@
 
 
 <p align="center">
-    <img src="https://github.com/shawarmateam/cfiles-engine/blob/main/assets/textures/logo.png" alt="logo" width="200" style="image-rendering: pixelated;
+    <img src="https://github.com/shawarmateam/cfiles-engine/blob/main/assets/textures/logo.png" alt="logo" width="200" style="image-rendering: optimizeSpeed;
                 image-rendering: -moz-crisp-edges;
-                image-rendering: crisp-edges;">
+                image-rendering: -o-crisp-edges;
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: pixelated;
+                image-rendering: optimize-contrast;
+                -ms-interpolation-mode: nearest-neighbor;">
     </br>
     <a href="https://github.com/shawarmateam/cfiles-engine/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/shawarmateam/cfiles-engine?style=for-the-badge">
