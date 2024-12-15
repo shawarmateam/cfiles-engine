@@ -7,7 +7,7 @@ Buffers::Buffers()
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
-    glBindVertexArray(VAO);
+    Buffers::bind();
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 }
 
@@ -16,6 +16,12 @@ void Buffers::unbind()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void Buffers::makeAttrib(GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+    glVertexAttribPointer(index, size, type, GL_FALSE, stride, pointer);
+    glEnableVertexAttribArray(index);
 }
 
 void Buffers::bind()

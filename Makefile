@@ -1,12 +1,8 @@
-
-#FLAGS = -lGL -lGLEW -lglfw -I/usr/include/glm -fmodules-ts -I/usr/include/
-
 CXX = g++
-CXXFLAGS = -I/usr/include -lGL -lglfw -I/usr/include/glm -I./include
+INCLUDES = /usr/include /usr/include/glm ./include ./fe-headers
+INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
+CXXFLAGS = $(INCLUDES_FLAGS) -lGL -lglfw
 SOURCES = src/main.cpp src/glad.c src/buffers.cpp src/shader.cpp
-#SOURCES = src/*
-#src/shader.cpp
-
 TARGET_DIR = bin
 TARGET = $(TARGET_DIR)/main
 
