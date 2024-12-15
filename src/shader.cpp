@@ -3,24 +3,18 @@
 char* Shader::readFile(const char* filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file) {
-        logerr("Unable to open the file");
-        std::cout << filename << std::endl;
-        exit(1);
+        logerr("Unable to open file: " << filename);
+        fe_panic();
     }
 
     std::streamsize size = file.tellg();
-    file.seekg(0, std::ios::beg);
-
-    char* buffer = new char[size + 1];
-
-    if (!file.read(buffer, size)) {
-        logerr("Error during reading the file");
-        delete[] buffer;
-        exit(1);
-    }
-
-    buffer[size] = 0;
-    return buffer;
+    std::vector<char> buffer(size + 1);
+    
+    file.seekg(0);
+    file.read(buffer.data(), size);
+    buffer[size] = '\0';
+    
+    return strdup(buffer.data());
 }
 
 void Shader::splitShader(const char* shaderSource, char** vertexShader, char** fragmentShader)
@@ -50,8 +44,30 @@ void Shader::splitShader(const char* shaderSource, char** vertexShader, char** f
     *vertexShader = strdup(vertexNew.c_str());
 }
 
-Shader::Shader(const char *filename)
-{
+void Shader::compileShader(GLuint shader, const char* code, const char* shaderType) {
+    glShaderSource(shader, 1, &code, nullptr);
+    glCompileShader(shader);
+
+    GLint status;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    
+    if (status != GL_TRUE) {
+        GLint logSize;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+        std::vector<GLchar> infolog(logSize);
+        glGetShaderInfoLog(shader, logSize, nullptr, infolog.data());
+        
+        std::string errorMsg = "Failed to compile ";
+        errorMsg += shaderType;
+        errorMsg += " shader:\n";
+        errorMsg += infolog.data();
+        logftl(errorMsg);
+        logftl("Shader code:\n" << code);
+        fe_panic();
+    }
+}
+
+Shader::Shader(const char *filename) {
     const char *shader_str = readFile(filename);
     char *vertexCode = nullptr;
     char *fragmentCode = nullptr;
@@ -59,49 +75,11 @@ Shader::Shader(const char *filename)
     splitShader(shader_str, &vertexCode, &fragmentCode);
 
     program = glCreateProgram();
-
     vs = glCreateShader(GL_VERTEX_SHADER);
-
-    //          shader, str_num (if [], otherwise 1 (if char*)), idk
-    glShaderSource(vs, 1, &vertexCode, nullptr);
-    glCompileShader(vs);
-    GLint status;
-
-    glGetShaderiv(vs, GL_COMPILE_STATUS, &status);
-
-    if (status != GL_TRUE)
-    {
-        logftl("UNABLE TO COMPILE SHADER (vs)");
-        GLint logSize;
-        glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
-        std::vector<GLchar> infolog(logSize);
-
-        glGetShaderInfoLog(vs, logSize, 0, infolog.data());
-        std::cout << infolog.data() << std::endl;
-        logftl("VERTEX CODE:");
-        std::cout << '{' << vertexCode << '}' << std::endl;
-        fe_panic();
-    }
-
     fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fragmentCode, nullptr);
-    glCompileShader(fs);
 
-    glGetShaderiv(fs, GL_COMPILE_STATUS, &status);
-
-    if (status != GL_TRUE)
-    {
-        logftl("UNABLE TO COMPILE SHADER (fs)");
-        GLint logSize;
-        glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
-        std::vector<GLchar> infolog(logSize);
-
-        glGetShaderInfoLog(vs, logSize, 0, infolog.data());
-        std::cout << infolog.data() << std::endl;
-        logftl("FRAGMENT CODE:");
-        std::cout << fragmentCode << std::endl;
-        fe_panic();
-    }
+    compileShader(vs, vertexCode, "vertex");
+    compileShader(fs, fragmentCode, "fragment");
 
     glAttachShader(program, vs);
     glAttachShader(program, fs);
@@ -110,34 +88,11 @@ Shader::Shader(const char *filename)
     glBindAttribLocation(program, 1, "textures");
 
     glLinkProgram(program);
-
-    glGetProgramiv(program, GL_LINK_STATUS, &status);
-    if (status != GL_TRUE)
-    {
-        logftl("UNABLE TO LINK SHADER PROGRAM");
-        GLint logSize;
-        glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
-        std::vector<GLchar> infolog(logSize);
-
-        glGetProgramInfoLog(program, logSize, 0, infolog.data());
-        std::cout << infolog.data() << std::endl;
-        fe_panic();
-    }
-
     glValidateProgram(program);
-    glGetProgramiv(program, GL_VALIDATE_STATUS, &status);
 
-    if (status != GL_TRUE)
-    {
-        logftl("UNABLE TO VALIDATE SHADER PROGRAM");
-        GLint logSize;
-        glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &logSize);
-        std::vector<GLchar> infolog(logSize);
-
-        glGetProgramInfoLog(program, logSize, 0, infolog.data());
-        std::cout << infolog.data() << std::endl;
-        fe_panic();
-    }
+    delete[] vertexCode;
+    delete[] fragmentCode;
+    delete[] shader_str;
 }
 
 void Shader::bind()

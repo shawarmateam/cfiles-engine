@@ -12,8 +12,8 @@
 
 #define RED "\033[31m"
 #define RESET "\033[0m"
-#define logftl(msg) std::cerr << RED "FE_FATAL: " msg RESET << std::endl
-#define logerr(msg) std::cerr << RED "FE_ERROR: " RESET msg << std::endl
+#define logftl(msg) std::cerr << RED "FE_FATAL: " << msg << RESET << std::endl
+#define logerr(msg) std::cerr << RED "FE_ERROR: " << RESET << msg << std::endl
 #define VERTEX_MARKER "// vertex shader"
 #define FRAGMENT_MARKER "// fragment shader"
 #define VERTEX_MARKER_LEN 16
@@ -27,6 +27,7 @@ class Shader
 
     public:
         char* readFile(const char* filename);
+        void compileShader(GLuint shader, const char* code, const char* shaderType);
         Shader(const char* filename);
         void bind();
         void setUniform(const char *name, int val);
