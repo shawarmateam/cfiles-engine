@@ -23,6 +23,7 @@ Window::Window(int w, int h, const char* t) : width(w), height(h), title(t) {
 }
 
 Window::~Window() {
+    terminateGLFW();
     if (window) glfwDestroyWindow(window);
 }
 
