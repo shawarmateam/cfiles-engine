@@ -8,12 +8,12 @@ layout (location=2) in vec2 aTexCoord;
 out vec3 ourColor;
 out vec2 ourTexCoord;
 
+uniform mat4 model;
 uniform mat4 camMatrix;
 
 void main()
 {
-   //gl_Position = vec4(aPos.x*(scale+1), aPos.y*(scale+1), aPos.z*(scale+1), 1.0);
-   gl_Position = camMatrix * vec4(aPos, 1.0);
+   gl_Position = camMatrix * model * vec4(aPos, 1.0);
    ourColor = aColor;
    ourTexCoord = aTexCoord;
 }
