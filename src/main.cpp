@@ -17,20 +17,35 @@
 #include "EBO.h"
 
 GLfloat vertices[] = {
-    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    // Bottom left
-    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 5.0f,    // Back left
-     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 5.0f,    // Back right
-     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    // Bottom right
-     0.0f,  0.8f,  0.0f,  0.92f, 0.86f, 0.76f,  2.5f, 2.5f     // Top
+    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, -1.0f, 0.0f,    // Bottom left
+    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 5.0f,    0.0f, -1.0f, 0.0f,    // Back left
+     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 5.0f,    0.0f, -1.0f, 0.0f,    // Back right
+     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, -1.0f, 0.0f,    // Bottom right
+
+    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,   -0.8f, 0.5f, 0.0f,    // Left side
+    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,   -0.8f, 0.5f, 0.0f,    // Left side
+     0.0f,  0.8f,  0.0f,  0.83f, 0.70f, 0.44f,  2.5f, 2.5f,   -0.8f, 0.5f, 0.0f,    // Right side
+
+    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, 0.5f,-0.8f,    // Non-facing side
+     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, 0.5f,-0.8f,    // Non-facing side
+     0.0f,  0.8f,  0.0f,  0.92f, 0.86f, 0.76f,  2.5f, 2.5f,    0.0f, 0.5f,-0.8f,    // Non-facing side
+
+     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.8f, 0.5f, 0.0f,    // Right side
+     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.8f, 0.5f, 0.0f,    // Right side
+     0.0f,  0.8f,  0.0f,  0.92f, 0.86f, 0.76f,  2.5f, 2.5f,    0.8f, 0.5f, 0.0f,    // Right side
+
+     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, 0.5f, 0.8f,    // Facing side
+    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, 0.5f, 0.8f,    // Facing side
+     0.0f,  0.8f,  0.0f,  0.92f, 0.86f, 0.76f,  2.5f, 2.5f,    0.0f, 0.5f, 0.8f     // Facing side
 };
 
 GLuint indices[] = {
-    0, 1, 2,    // Bottom part (2 triangles)
+    0, 1, 2,
     0, 2, 3,
-    0, 1, 4,    // Side parts (4 triangles)
-    1, 2, 4,
-    2, 3, 4,
-    3, 0, 4
+    4, 6, 5,
+    7, 9, 8,
+    10, 12, 11,
+    13, 15, 14
 };
 
 GLfloat lightVertices[] = {
@@ -80,9 +95,10 @@ int fe_main() {
     VBO vbo(vertices, sizeof(vertices));
     EBO ebo(indices, sizeof(indices));
 
-    vao.makeAttrib(vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-    vao.makeAttrib(vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    vao.makeAttrib(vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float))); // <<
+    vao.makeAttrib(vbo, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
+    vao.makeAttrib(vbo, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+    vao.makeAttrib(vbo, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+    vao.makeAttrib(vbo, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(9 * sizeof(float)));
     
     vao.unbind();
     vbo.unbind();
@@ -107,7 +123,7 @@ int fe_main() {
     lightVBO.unbind();
     lightEBO.unbind();
 
-
+    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     felog("fe_main(): initializing light model...");
     glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -123,10 +139,17 @@ int fe_main() {
     lightShader.bind();
     felog("fe_main(): setting light model...");
     lightShader.setUniform("model", lightModel);
+
+    felog("fe_main(): setting light color...");
+    glUniform4f(glGetUniformLocation(lightShader.getProgram(), "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+
     felog("fe_main(): binding shader...");
     shader.bind();
     felog("fe_main(): setting pyramid model...");
     shader.setUniform("model", pyramidModel);
+
+    glUniform4f(glGetUniformLocation(shader.getProgram(), "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+    glUniform3f(glGetUniformLocation(shader.getProgram(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
     felog("fe_main(): initializing texture...");
     Texture texture("assets/textures/logo.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
