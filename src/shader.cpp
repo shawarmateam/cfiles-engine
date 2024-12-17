@@ -3,7 +3,7 @@
 char* Shader::readFile(const char* filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file) {
-        logerr("Unable to open file: " << filename);
+        felogerr("Unable to open file: " << filename);
         fe_panic();
     }
 
@@ -23,8 +23,8 @@ void Shader::splitShader(const char* shaderSource, char** vertexShader, char** f
     const char* fragmentPos = strstr(shaderSource, FRAGMENT_MARKER);
 
     if (vertexPos == nullptr || fragmentPos == nullptr) {
-        logerr("Unable to find marker(s)");
-        exit(1);
+        felogerr("Unable to find marker(s)");
+        fe_panic();
     }
 
     size_t vertexLength = fragmentPos - vertexPos - VERTEX_MARKER_LEN;
@@ -61,8 +61,8 @@ void Shader::compileShader(GLuint shader, const char* code, const char* shaderTy
         errorMsg += shaderType;
         errorMsg += " shader:\n";
         errorMsg += infolog.data();
-        logftl(errorMsg);
-        logftl("Shader code:\n" << code);
+        felogftl(errorMsg);
+        felogftl("Shader code:\n" << code);
         fe_panic();
     }
 }

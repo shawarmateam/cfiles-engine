@@ -8,12 +8,9 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include "fe-kernel.h"
+#include "fe-kernel.h"  // for panic
+#include "fe-settings.h" // for log
 
-#define RED "\033[31m"
-#define RESET "\033[0m"
-#define logftl(msg) std::cerr << RED "FE_FATAL: " << msg << RESET << std::endl
-#define logerr(msg) std::cerr << RED "FE_ERROR: " << RESET << msg << std::endl
 #define VERTEX_MARKER "// vertex shader"
 #define FRAGMENT_MARKER "// fragment shader"
 #define VERTEX_MARKER_LEN 16

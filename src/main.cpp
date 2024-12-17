@@ -1,6 +1,5 @@
 #include "window.h"
 #include "shader.h"
-#include "buffers.h"
 #include "texture.h"
 #include <cmath>
 #include <vector>
@@ -9,15 +8,36 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "model.h"
+//#include "model.h"
 #include "camera.h"
 #include "fe-settings.h"
+
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
+
+GLfloat vertices[] = {
+    -0.5f,  0.0f, 0.5f,        0.83f, 0.70f, 0.44f,       0.0f, 0.0f, // Bottom left
+    -0.5f,  0.0f, -0.5f,        0.83f, 0.70f, 0.44f,      5.0f, 0.0f, // Top left
+        0.5f,  0.0f, -0.5f,        0.83f, 0.70f, 0.44f,      0.0f, 0.0f, // Top right
+        0.5f,  0.0f, 0.5f,        0.83f, 0.70f, 0.44f,       5.0f, 0.0f,  // Bottom right
+        0.0f, 0.8f, 0.0f,        0.92f, 0.86f, 0.76f,       2.5f, 5.0f
+};
+
+GLuint indices[] = {
+    0, 1, 2,
+    0, 2, 3,
+    0, 1, 4,
+    1, 2, 4,
+    2, 3, 4,
+    3, 0, 4
+};
 
 GLfloat lightVertices[] = {
     -0.1f, -0.1f,  0.1f,
     -0.1f, -0.1f, -0.1f,
      0.1f, -0.1f, -0.1f,
-    -0.1f,  0.1f,  0.1f,
+     0.1f, -0.1f,  0.1f,
 
     -0.1f,  0.1f,  0.1f,
     -0.1f,  0.1f, -0.1f,
@@ -37,94 +57,128 @@ GLuint lightIndices[] = {
     1, 5, 4,
     1, 4, 0,
     4, 5, 6,
-    4, 6, 7,
+    4, 6, 7
 };
 
 int fe_main() {
-    log("fe_main(): initializing GLFW...");
+    felog("fe_main(): initializing GLFW...");
     Window::initGLFW();
-    log("fe_main(): initializing window...");
+    felog("fe_main(): initializing window...");
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Files Engine");
 
-    log("fe_main(): initializing model...");
-    Model model;
+    //Model model;
 
-    log("fe_main(): initializing shader...");
+
+
+    felog("fe_main(): initializing shader...");
     Shader shader("shaders/shader_def.glsl");
+    felog("fe_main(): initializing model...");
 
-    log("fe_main(): initializing light shader...");
+    VAO vao;
+    vao.bind();
+
+    VBO vbo(vertices, sizeof(vertices));
+    EBO ebo(indices, sizeof(indices));
+
+    vao.makeAttrib(vbo, 0, 3, GL_FLOAT, 11 * sizeof(GLfloat), (GLvoid*)0);
+    vao.makeAttrib(vbo, 1, 3, GL_FLOAT, 11 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    vao.makeAttrib(vbo, 2, 2, GL_FLOAT, 11 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+    vao.makeAttrib(vbo, 3, 3, GL_FLOAT, 11 * sizeof(GLfloat), (GLvoid*)(8 * sizeof(GLfloat)));
+    
+    vao.unbind();
+    vbo.unbind();
+    ebo.unbind();
+
+    felog("fe_main(): initializing light shader...");
     Shader lightShader("shaders/light_shader.glsl");
 
-    log("fe_main(): initializing light buffers...");
-    Buffers light;
-    light.bind();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lightIndices), lightIndices, GL_STATIC_DRAW);
-    light.makeAttrib(0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-    light.unbind();
+    felog("fe_main(): initializing light buffers...");
+    //Buffers light;
+    //light.bind();
 
-    log("fe_main(): initializing light model...");
+    VAO lightVAO;
+    lightVAO.bind();
+
+    VBO lightVBO(lightVertices, sizeof(lightVertices));
+    EBO lightEBO(lightIndices, sizeof(lightIndices));
+
+    lightVAO.makeAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+
+    lightVAO.unbind();
+    lightVBO.unbind();
+    lightEBO.unbind();
+
+
+
+    felog("fe_main(): initializing light model...");
     glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel = glm::translate(lightModel, lightPos);
 
-    log("fe_main(): initializing pyramid model...");
+    felog("fe_main(): initializing pyramid model...");
     glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 pyramidModel = glm::mat4(1.0f);
     pyramidModel = glm::translate(pyramidModel, pyramidPos);
 
-    log("fe_main(): binding light shader...");
+    felog("fe_main(): binding light shader...");
     lightShader.bind();
-    log("fe_main(): setting light model...");
+    felog("fe_main(): setting light model...");
     lightShader.setUniform("model", lightModel);
-    log("fe_main(): binding shader...");
+    felog("fe_main(): binding shader...");
     shader.bind();
-    log("fe_main(): setting pyramid model...");
+    felog("fe_main(): setting pyramid model...");
     shader.setUniform("model", pyramidModel);
 
-    log("fe_main(): initializing texture...");
+    felog("fe_main(): initializing texture...");
     Texture texture("assets/textures/logo.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    log("fe_main(): setting texture unit...");
+    if (!texture.id) {
+        felogftl("Failed to load texture");
+        return -1;
+    }
+
+    felog("fe_main(): setting texture unit...");
     texture.texUnit(shader, "tex0", 0);
 
-    log("fe_main(): enabling depth test...");
+    felog("fe_main(): enabling depth test...");
     glEnable(GL_DEPTH_TEST);
 
-    log("fe_main(): initializing camera...");
+    felog("fe_main(): initializing camera...");
     Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
-    log("fe_main(): entering main loop...");
+    felog("fe_main(): entering main loop...");
     while (!window.shouldClose() && !fe_status) {
         window.pollEvents();
         window.clear();
 
         camera.inputs(window.getWindow());
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
-
-        log("fe_main(): binding shader...");
+        felog("fe_main(): binding shader...");
         shader.bind();
-        log("fe_main(): setting camera matrix...");
+        felog("fe_main(): setting camera matrix...");
         camera.matrix(shader, "camMatrix");
-        log("fe_main(): binding texture...");
+
+        felog("fe_main(): binding texture...");
         texture.bind();
-        log("fe_main(): binding model...");
-        model.bindBuff();
-        log("fe_main(): drawing elements...");
-        glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+        felog("fe_main(): binding model...");
+        vao.bind();
+        felog("fe_main(): drawing elements...");
+        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(GLuint), GL_UNSIGNED_INT, 0);
 
-        log("fe_main(): binding light shader...");
+        felog("fe_main(): binding light shader...");
         lightShader.bind();
-        log("fe_main(): setting camera matrix...");
+        felog("fe_main(): setting camera matrix...");
         camera.matrix(lightShader, "camMatrix");
-        log("fe_main(): binding light buffers...");
-        light.bind();
-        log("fe_main(): drawing elements...");
-        glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+        felog("fe_main(): binding light buffers...");
+        lightVAO.bind();
+        felog("fe_main(): drawing elements...");
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+        felog("fe_main(): swapping buffers...");
         window.swapBuffers();
+        felog("fe_main(): end of main loop");
     }
 
-    log("fe_main(): exiting main loop (end of fe_main)...");
+    felog("fe_main(): exiting main loop (end of fe_main)...");
     return 0;
 }
 
