@@ -4,8 +4,8 @@
 #include <iostream>
 
 // settings for fe-kernel
-#define WINDOW_WIDTH 600
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 800
 
 #define LOG_LEVEL_INFO
 

@@ -17,10 +17,10 @@
 #include "EBO.h"
 
 GLfloat vertices[] = {
-    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, -1.0f, 0.0f,    // Bottom left
-    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 5.0f,    0.0f, -1.0f, 0.0f,    // Back left
-     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 5.0f,    0.0f, -1.0f, 0.0f,    // Back right
-     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, -1.0f, 0.0f,    // Bottom right
+    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    // Bottom left
+    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 5.0f,    0.0f, 1.0f, 0.0f,    // Back left
+     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 5.0f,    0.0f, 1.0f, 0.0f,    // Back right
+     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, 1.0f, 0.0f,    // Bottom right
 
     -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,   -0.8f, 0.5f, 0.0f,    // Left side
     -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,   -0.8f, 0.5f, 0.0f,    // Left side
@@ -98,7 +98,7 @@ int fe_main() {
     vao.makeAttrib(vbo, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
     vao.makeAttrib(vbo, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
     vao.makeAttrib(vbo, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
-    vao.makeAttrib(vbo, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(9 * sizeof(float)));
+    vao.makeAttrib(vbo, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
     
     vao.unbind();
     vbo.unbind();
@@ -126,9 +126,10 @@ int fe_main() {
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     felog("fe_main(): initializing light model...");
-    glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec3 lightPos(2.0f, 2.0f, 0.0f);
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel = glm::translate(lightModel, lightPos);
+    lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 
     felog("fe_main(): initializing pyramid model...");
     glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -176,6 +177,7 @@ int fe_main() {
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
         felog("fe_main(): binding shader...");
         shader.bind();
+        glUniform3f(glGetUniformLocation(shader.getProgram(), "camPos"), camera.pos.x, camera.pos.y, camera.pos.z);
         felog("fe_main(): setting camera matrix...");
         camera.matrix(shader, "camMatrix");
 
