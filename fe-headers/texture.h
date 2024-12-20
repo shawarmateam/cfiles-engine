@@ -10,12 +10,12 @@ class Texture {
 
 public:
     GLuint id;
-    GLenum type;
+    const char* type;
     int width, height, nrChannels;
     GLuint unit;
 
-    Texture(unsigned char *data, GLenum texType, GLuint slot, GLenum format, GLenum pixelType);
-    Texture(const char *path, GLenum texType, GLuint slot, GLenum format, GLenum pixelType);
+    Texture(unsigned char *data, const char* texType, GLuint slot, GLenum format, GLenum pixelType);
+    Texture(const char *path, const char* texType, GLuint slot, GLenum format, GLenum pixelType);
     ~Texture();
 
     unsigned char* getData(const char *path);

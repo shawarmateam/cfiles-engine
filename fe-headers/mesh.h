@@ -13,9 +13,12 @@ public:
     std::vector<GLuint> indices;
     std::vector<Texture> textures;
 
+    VAO vao;
+
     Mesh(std::vector<Vertex> &vertices, std::vector<GLuint> &indices, std::vector<Texture> &textures);
     ~Mesh();
-    void Draw(Shader &shader);
+
+    void draw(Shader &shader, Camera &camera);
 };
 
 #endif

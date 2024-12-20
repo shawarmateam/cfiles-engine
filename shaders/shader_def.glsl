@@ -2,13 +2,13 @@
 #version 330 core
 
 layout (location=0) in vec3 aPos;
-layout (location=1) in vec3 aColor;
-layout (location=2) in vec2 aTexCoord;
-layout (location=3) in vec3 aNormal;
+layout (location=1) in vec3 aNormal;
+layout (location=2) in vec3 aColor;
+layout (location=3) in vec2 aTexCoord;
+out vec3 FragPos;
+out vec3 Normal;
 out vec3 ourColor;
 out vec2 ourTexCoord;
-out vec3 Normal;
-out vec3 FragPos;
 
 uniform mat4 model;
 uniform mat4 camMatrix;
@@ -16,25 +16,26 @@ uniform mat4 camMatrix;
 void main()
 {
    FragPos = vec3(model * vec4(aPos, 1.0));
-   Normal = mat3(transpose(inverse(model))) * aNormal;
+   Normal = aNormal;
    
-   gl_Position = camMatrix * vec4(FragPos, 1.0);
    ourColor = aColor;
    ourTexCoord = aTexCoord;
+
+   gl_Position = camMatrix * vec4(FragPos, 1.0);
 }
 
 // fragment shader
 #version 330 core
 
+in vec3 FragPos;
+in vec3 Normal;
 in vec3 ourColor;
 in vec2 ourTexCoord;
-in vec3 Normal;
-in vec3 FragPos;
 
 out vec4 FragColor;
 
-uniform sampler2D tex0;
-uniform sampler2D tex1;
+uniform sampler2D diffuse0;
+uniform sampler2D specular0;
 uniform vec4 lightColor;
 uniform vec3 lightPos;
 uniform vec3 camPos;
@@ -59,8 +60,8 @@ vec4 pointLight() {
    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
    float specular = specularStrength * spec;
 
-   vec4 texColor = texture(tex0, ourTexCoord);
-   vec4 texColor2 = texture(tex1, ourTexCoord);
+   vec4 texColor = texture(diffuse0, ourTexCoord);
+   vec4 texColor2 = texture(specular0, ourTexCoord);
    vec4 result = (texColor * (diff * intensity + ambient) + texColor2.r * specular * intensity) * lightColor;
 
    return result;
@@ -80,8 +81,8 @@ vec4 directionalLight() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     float specular = specularStrength * spec;
 
-    vec4 texColor = texture(tex0, ourTexCoord);
-    vec4 texColor2 = texture(tex1, ourTexCoord);
+    vec4 texColor = texture(diffuse0, ourTexCoord);
+    vec4 texColor2 = texture(specular0, ourTexCoord);
     
     vec4 result = (texColor * (diff + ambient) + texColor2.r * specular) * lightColor;
 
@@ -107,8 +108,8 @@ vec4 spotLight() {
 
     float angle = dot(vec3(0.0f, -1.0f, 0.0f), -lightDirection);
 
-    vec4 texColor = texture(tex0, ourTexCoord);
-    vec4 texColor2 = texture(tex1, ourTexCoord);
+    vec4 texColor = texture(diffuse0, ourTexCoord);
+    vec4 texColor2 = texture(specular0, ourTexCoord);
     
     vec4 result = (texColor * (diff + ambient) + texColor2.r * specular) * lightColor;
 

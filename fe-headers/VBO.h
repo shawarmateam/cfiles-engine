@@ -2,13 +2,21 @@
 #define VBO_H
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <vector>
+struct Vertex {
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 texUV;
+    glm::vec3 color;
+};
 
 class VBO
 {
 public:
     GLuint VBObuff;
 
-    VBO(GLfloat* vertices, GLsizeiptr size);
+    VBO(std::vector<Vertex> &vertices);
     ~VBO();
     void bind();
     void unbind();
