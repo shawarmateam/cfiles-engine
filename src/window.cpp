@@ -1,5 +1,13 @@
 #include "window.h"
 
+void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id,
+                              GLenum severity, GLsizei length,
+                              const GLchar* message, const void* userParam) {
+    std::cerr << "GL CALLBACK: " << (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "") 
+              << " type = " << type << ", severity = " << severity 
+              << ", message = " << message << std::endl;
+}
+
 Window::Window(int w, int h, const char* t) : width(w), height(h), title(t) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -18,6 +26,9 @@ Window::Window(int w, int h, const char* t) : width(w), height(h), title(t) {
         std::cerr << "Failed to initialize GLAD" << std::endl;
         fe_panic();
     }
+
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(MessageCallback, nullptr);
 
     glViewport(0, 0, width, height);
 }

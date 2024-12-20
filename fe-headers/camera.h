@@ -14,20 +14,19 @@
 
 class Camera {
 public:
+    int w, h;
     glm::vec3 pos;
     glm::vec3 orientation = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::mat4 cameraMatrix = glm::mat4(1.0f);
 
-    int w,h;
-
     float speed = 0.1f;
     float sensitivity = 100.0f;
-    float fov;
-    float near_plane;
-    float far_plane;
-    
-    Camera(int w, int h, glm::vec3 pos);
+    float fov = 45.0f;
+    float near_plane = 0.1f;
+    float far_plane = 100.0f;
+
+    Camera(int w, int h, glm::vec3 pos) : w(w), h(h), pos(pos) {}
     ~Camera();
 
     void inputs(GLFWwindow *window);

@@ -17,35 +17,16 @@
 #include "EBO.h"
 
 GLfloat vertices[] = {
-    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    // Bottom left
-    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 5.0f,    0.0f, 1.0f, 0.0f,    // Back left
-     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 5.0f,    0.0f, 1.0f, 0.0f,    // Back right
-     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, 1.0f, 0.0f,    // Bottom right
-
-    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,   -0.8f, 0.5f, 0.0f,    // Left side
-    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,   -0.8f, 0.5f, 0.0f,    // Left side
-     0.0f,  0.8f,  0.0f,  0.83f, 0.70f, 0.44f,  2.5f, 2.5f,   -0.8f, 0.5f, 0.0f,    // Right side
-
-    -0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, 0.5f,-0.8f,    // Non-facing side
-     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, 0.5f,-0.8f,    // Non-facing side
-     0.0f,  0.8f,  0.0f,  0.92f, 0.86f, 0.76f,  2.5f, 2.5f,    0.0f, 0.5f,-0.8f,    // Non-facing side
-
-     0.5f,  0.0f, -0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.8f, 0.5f, 0.0f,    // Right side
-     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.8f, 0.5f, 0.0f,    // Right side
-     0.0f,  0.8f,  0.0f,  0.92f, 0.86f, 0.76f,  2.5f, 2.5f,    0.8f, 0.5f, 0.0f,    // Right side
-
-     0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  5.0f, 0.0f,    0.0f, 0.5f, 0.8f,    // Facing side
-    -0.5f,  0.0f,  0.5f,  0.83f, 0.70f, 0.44f,  0.0f, 0.0f,    0.0f, 0.5f, 0.8f,    // Facing side
-     0.0f,  0.8f,  0.0f,  0.92f, 0.86f, 0.76f,  2.5f, 2.5f,    0.0f, 0.5f, 0.8f     // Facing side
+    // Position            // Color              // UV           // Normal
+    -1.0f, 0.0f, 1.0f,     0.0f, 0.0f, 0.0f,     0.0f, 0.0f,     0.0f, 1.0f, 0.0f,
+    -1.0f, 0.0f,-1.0f,     0.0f, 0.0f, 0.0f,     0.0f, 1.0f,     0.0f, 1.0f, 0.0f,
+     1.0f, 0.0f,-1.0f,     0.0f, 0.0f, 0.0f,     1.0f, 1.0f,     0.0f, 1.0f, 0.0f,
+     1.0f, 0.0f, 1.0f,     0.0f, 0.0f, 0.0f,     1.0f, 0.0f,     0.0f, 1.0f, 0.0f,
 };
 
 GLuint indices[] = {
     0, 1, 2,
-    0, 2, 3,
-    4, 6, 5,
-    7, 9, 8,
-    10, 12, 11,
-    13, 15, 14
+    0, 2, 3
 };
 
 GLfloat lightVertices[] = {
@@ -74,6 +55,8 @@ GLuint lightIndices[] = {
     4, 5, 6,
     4, 6, 7
 };
+
+
 
 int fe_main() {
     felog("fe_main(): initializing GLFW...");
@@ -126,7 +109,7 @@ int fe_main() {
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     felog("fe_main(): initializing light model...");
-    glm::vec3 lightPos(2.0f, 2.0f, 0.0f);
+    glm::vec3 lightPos(1.0f, 1.0f, 1.0f);
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel = glm::translate(lightModel, lightPos);
     lightModel = glm::scale(lightModel, glm::vec3(0.2f));
@@ -153,7 +136,7 @@ int fe_main() {
     glUniform3f(glGetUniformLocation(shader.getProgram(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
     felog("fe_main(): initializing texture...");
-    Texture texture("assets/textures/logo.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture texture("assets/textures/wood.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     if (!texture.id) {
         felogftl("Failed to load texture");
         return -1;
@@ -161,6 +144,14 @@ int fe_main() {
 
     felog("fe_main(): setting texture unit...");
     texture.texUnit(shader, "tex0", 0);
+
+    Texture texture2("assets/textures/wood_ac.jpg", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGB, GL_UNSIGNED_BYTE);
+    if (!texture2.id) {
+        felogftl("Failed to load texture2");
+        return -1;
+    }
+
+    texture2.texUnit(shader, "tex1", 1);
 
     felog("fe_main(): enabling depth test...");
     glEnable(GL_DEPTH_TEST);
@@ -183,6 +174,7 @@ int fe_main() {
 
         felog("fe_main(): binding texture...");
         texture.bind();
+        texture2.bind();
         felog("fe_main(): binding model...");
         vao.bind();
         felog("fe_main(): drawing elements...");

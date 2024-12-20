@@ -2,8 +2,8 @@
 
 bool firstClick = true;
 
-Camera::Camera(int w, int h, glm::vec3 pos)
-    : w(w), h(h), pos(pos) {}
+//Camera::Camera(int w, int h, glm::vec3 pos)
+//    : w(w), h(h), pos(pos) {}
 
 Camera::~Camera() {}
 

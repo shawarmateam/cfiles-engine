@@ -1,13 +1,21 @@
 #include "texture.h"
 
-Texture::Texture(const char *path, GLenum texType, GLenum slot, GLenum format, GLenum pixelType) {
+Texture::Texture(const char *path, GLenum texType, GLuint slot, GLenum format, GLenum pixelType) {
     type = texType;
     
     stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
+    if (!data) {
+        std::cerr << "Failed to load texture: " << path << std::endl;
+        std::cerr << "STB Error: " << stbi_failure_reason() << std::endl;
+        return;
+    }
+    std::cout << "Texture loaded successfully: " << path << std::endl;
+    std::cout << "Width: " << width << ", Height: " << height << ", Channels: " << nrChannels << std::endl;
 
     glGenTextures(1, &id);
-    glActiveTexture(slot);
+    glActiveTexture(GL_TEXTURE0 + slot);
+    unit = slot;
     glBindTexture(texType, id);
 
     glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -24,14 +32,15 @@ Texture::Texture(const char *path, GLenum texType, GLenum slot, GLenum format, G
 }
 
 
-Texture::Texture(unsigned char *data, GLenum texType, GLenum slot, GLenum format, GLenum pixelType) {
+Texture::Texture(unsigned char *data, GLenum texType, GLuint slot, GLenum format, GLenum pixelType) {
     type = texType;
     
     stbi_set_flip_vertically_on_load(true);
     //unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
 
     glGenTextures(1, &id);
-    glActiveTexture(slot);
+    glActiveTexture(GL_TEXTURE0 + slot);
+    unit = slot;
     glBindTexture(texType, id);
 
     glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -54,11 +63,12 @@ void Texture::texUnit(Shader& shader, const char *uniform, GLuint unit) {
 }
 
 void Texture::bind() {
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(type, id);
 }
 
 void Texture::unbind() {
-    glBindTexture(type, 0);
+    glBindTexture(type, id);
 }
 
 void Texture::remove() {

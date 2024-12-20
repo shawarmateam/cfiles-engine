@@ -1,21 +1,25 @@
 CXX = g++
-INCLUDES = /usr/include /usr/include/glm ./include ./fe-headers
-INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-CXXFLAGS = $(INCLUDES_FLAGS) -lGL -lglfw
-#SOURCES = src/main.cpp src/glad.c src/buffers.cpp src/shader.cpp src/boot.c src/window.cpp src/stb.cpp src/texture.cpp src/model.cpp src/camera.cpp
+INCLUDES = -I/usr/include -I/usr/include/glm -I./include -I./fe-headers
+CXXFLAGS = $(INCLUDES) -Wall -O2
+LDFLAGS = -L./lib -lglfw3 -lglm
 
-SOURCES = src/*
+SRCS = $(wildcard src/*.cpp src/*.c)
+OBJS = $(SRCS:src/%.cpp=obj/%.o)
+OBJS := $(OBJS:src/%.c=obj/%.o)
 
-TARGET_DIR = bin
-TARGET = $(TARGET_DIR)/main
+all: bin/main
 
-all: $(TARGET_DIR) $(TARGET)
+bin/main: $(OBJS)
+	@mkdir -p bin obj
+	$(CXX) $(OBJS) non-obj/glad.c $(INCLUDES) -o $@ $(LDFLAGS)
 
-$(TARGET_DIR):
-	mkdir -p $(TARGET_DIR)
+obj/%.o: src/%.cpp
+	@mkdir -p obj
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(TARGET): $(SOURCES)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+obj/%.o: src/%.c
+	@mkdir -p obj
+	$(CC) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(TARGET_DIR)
+	rm -rf bin obj
