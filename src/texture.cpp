@@ -1,6 +1,8 @@
 #include "texture.h"
 
 Texture::Texture(const char *path, const char* texType, GLuint slot, GLenum format, GLenum pixelType) {
+    type = texType ? texType : "diffuse";
+
     stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
     if (!data) {
@@ -31,6 +33,8 @@ Texture::Texture(const char *path, const char* texType, GLuint slot, GLenum form
 
 
 Texture::Texture(unsigned char *data, const char* texType, GLuint slot, GLenum format, GLenum pixelType) {
+    type = texType ? texType : "diffuse";
+
     stbi_set_flip_vertically_on_load(true);
     //unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
 
