@@ -33,6 +33,7 @@ void Mesh::draw(Shader &shader, Camera &camera)
     {
         std::string number;
         std::string type = textures[i].type;
+
         if (type == "diffuse")
         {
             number = std::to_string(numDiffuse++);
@@ -42,8 +43,8 @@ void Mesh::draw(Shader &shader, Camera &camera)
             number = std::to_string(numSpecular++);
         }
 
-        textures[i].texUnit(shader, (type + number).c_str(), i);
-        textures[i].bind();
+		textures[i].texUnit(shader, (type + number).c_str(), i);
+		textures[i].bind();
     }
 
     glUniform3f(glGetUniformLocation(shader.getProgram(), "camPos"), camera.pos.x, camera.pos.y, camera.pos.z);

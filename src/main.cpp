@@ -50,8 +50,8 @@ int fe_main() {
     Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Files Engine");
 
     Texture textures[] = {
-        Texture("assets/textures/wood.jpg", "diffuse", GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE),
-        Texture("assets/textures/wood_ac.jpg", "specular", GL_TEXTURE1, GL_RGB, GL_UNSIGNED_BYTE)
+        Texture("assets/textures/wood.jpg", "diffuse", 0, GL_RGB, GL_UNSIGNED_BYTE),
+        Texture("assets/textures/wood_ac.jpg", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
     };
 
     felog("fe_main(): initializing shader...");
