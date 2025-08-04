@@ -43,6 +43,7 @@ void Mesh::draw
     Shader& shader,
     Camera& camera,
     int shType,
+		glm::vec4 customObjColor,
     glm::mat4 matrix,
     glm::vec3 translation,
     glm::quat rotation,
@@ -65,7 +66,7 @@ void Mesh::draw
         }
 
         textures[i].texUnit(shader, (type + num).c_str(), i);
-        shader.setUniform("objColor", objColor);
+        shader.setUniform("objColor", (customObjColor.a == 0) ? objColor : customObjColor);
         shader.setUniform("shaderType", shType);
         textures[i].bind();
     }
